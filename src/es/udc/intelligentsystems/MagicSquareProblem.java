@@ -196,14 +196,16 @@ public class MagicSquareProblem extends SearchProblem {
                 if ((horizontalResult + acc) > objective)
                     iterator.remove();
                 else if(((i + 2) % size) == 0){
-                    if((objective - (horizontalResult + acc)) > square.size())
+                    if( ((objective - (horizontalResult + acc)) > square.size()) )
+                            //|| ((horizontalResult + acc) == objective) )
                         iterator.remove();
                 }
 
                 else if ((verticalResult + acc) > objective)
                     iterator.remove();
                 else if(i >= (square.size() - size * 2)){
-                    if((objective - (verticalResult + acc)) > square.size())
+                    if( ((objective - (verticalResult + acc)) > square.size()) )
+                            //|| ((verticalResult + acc) == objective) )
                         iterator.remove();
                 }
 

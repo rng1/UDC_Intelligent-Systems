@@ -11,6 +11,7 @@ public class BreadthFirstStrategy implements SearchStrategy {
         Node magicSquareNode = new MagicSquareNode(p.getInitialState(), null, null);
         frontier.offer(magicSquareNode);
         int i = 0;
+        int j = 1;
 
         while (!frontier.isEmpty()){
             magicSquareNode = frontier.remove();
@@ -25,12 +26,15 @@ public class BreadthFirstStrategy implements SearchStrategy {
                 State sc = p.result(magicSquareNode.getState(), acc);
                 Node tempMagicSquareNode = new MagicSquareNode(sc, magicSquareNode, acc);
                 if(p.isGoal(sc)){
-                    System.out.println("\n\nNumber of cases studied: " + i + "\nSolution:");
+                    System.out.println( "\n\nNumber of expanded nodes: " + i +
+                                        "\nNumber of created nodes: " + j +
+                                        "\nSolution:");
                     System.out.println(tempMagicSquareNode);
                     return reconstructSol(tempMagicSquareNode);
                 }
                 if (notContainState(sc, explored) && notContainState(sc, frontier)) {
                     frontier.add(tempMagicSquareNode);
+                    j++;
                 }
             }
         }
