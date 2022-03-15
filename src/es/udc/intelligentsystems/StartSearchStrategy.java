@@ -2,19 +2,19 @@ package es.udc.intelligentsystems;
 
 import java.util.*;
 
-public class DepthFirstStrategy implements SearchStrategy {
+public class StartSearchStrategy implements InformedSearchStrategy {
 
     @Override
-    public Node[] solve(SearchProblem p) throws Exception {
+    public State solve(SearchProblem p, Heuristic h) throws Exception {
         List<Node> explored = new ArrayList<>();
-        Stack<Node> frontier = new Stack<>();
-        Node magicSquareNode = new MagicSquareNode(p.getInitialState(), null, null);
-        frontier.push(magicSquareNode);
+        Queue<Node> frontier = new PriorityQueue<>();
+        Node magicSquareNode = new MagicSquareWeightedNode(p.getInitialState(), null, null, 0, h.evaluate(p.getInitialState()));
+        frontier.offer(magicSquareNode);
         int i = 0;
         int j = 1;
 
         while (!frontier.isEmpty()){
-            magicSquareNode = frontier.pop();
+            magicSquareNode = frontier.poll();
 
             if(p.isGoal(magicSquareNode.getState())){
                 System.out.println( "\n\nNumber of expanded nodes: " + i +
@@ -22,7 +22,8 @@ public class DepthFirstStrategy implements SearchStrategy {
                         "\nNumber of explored nodes: " + explored.size() +
                         "\nSolution:");
                 System.out.println(magicSquareNode);
-                return reconstructSol(magicSquareNode);
+                //return reconstructSol(magicSquareNode);
+                return magicSquareNode.getState();
             }
 
             explored.add(magicSquareNode); i++;
@@ -33,9 +34,10 @@ public class DepthFirstStrategy implements SearchStrategy {
 
             for (Action acc: availableActions) {
                 State sc = p.result(magicSquareNode.getState(), acc);
+                float cost = ((MagicSquareWeightedNode) magicSquareNode).getStateCost() + acc.getCost();
                 if (notContainState(sc, explored) && notContainState(sc, frontier)) {
-                    Node tempMagicSquareNode = new MagicSquareNode(sc, magicSquareNode, acc);
-                    frontier.push(tempMagicSquareNode); j++;
+                    Node tempMagicSquareNode = new MagicSquareWeightedNode(sc, magicSquareNode, acc, cost, cost + h.evaluate(sc));
+                    frontier.offer(tempMagicSquareNode); j++;
                 }
             }
         }

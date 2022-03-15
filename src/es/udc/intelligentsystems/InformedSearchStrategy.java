@@ -7,5 +7,5 @@ public interface InformedSearchStrategy {
      * @param h Heuristic that assigns a utility value to each state
      * @return Goal state found
      */
-    public abstract State solve(SearchProblem p, Heuristic h) throws Exception;
+    State solve(SearchProblem p, Heuristic h) throws Exception;
 }

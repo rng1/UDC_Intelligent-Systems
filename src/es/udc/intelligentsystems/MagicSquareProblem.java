@@ -82,6 +82,10 @@ public class MagicSquareProblem extends SearchProblem {
             result = 31 * result + square.hashCode();
             return result;
         }
+
+        public List<Integer> getSquare() {
+            return square;
+        }
     }
 
     @Override
