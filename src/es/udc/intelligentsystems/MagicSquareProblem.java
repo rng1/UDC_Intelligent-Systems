@@ -1,7 +1,6 @@
 package es.udc.intelligentsystems;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class MagicSquareProblem extends SearchProblem {
@@ -27,6 +26,63 @@ public class MagicSquareProblem extends SearchProblem {
 
         @Override
         public boolean isApplicable(State st) {
+            MagicSquareState msSt = (MagicSquareState) st;
+            List<Integer> square = msSt.square;
+            int size = msSt.size;
+
+            int[] sums = presentResults(st);
+            int j;
+            int objective = (size*((size*size) + 1))/2;
+
+            int pos = this.position, num = this.number;
+
+            int horizontalResult, verticalResult;
+            boolean diagonal_1 = false;
+            int diagonalResult_1 = 0;
+            boolean diagonal_2 = false;
+            int diagonalResult_2 = 0;
+
+            horizontalResult = sums[pos/size];
+            verticalResult = sums[(pos%size) + size];
+            for(j = 0; j < square.size(); j = j + size + 1) {
+                if (j == pos) {
+                    diagonal_1 = true;
+                    diagonalResult_1 = sums[size * 2];
+                    break;
+                }
+            }
+            for(j = size - 1; j < square.size(); j = j + size - 1) {
+                if (j == pos) {
+                    diagonal_2 = true;
+                    diagonalResult_2 = sums[size * 2 + 1];
+                    break;
+                }
+            }
+
+            // LAST NUMBER CAN BE ONLY ONE
+            if(((pos + 1) % size) == 0){
+                return num == objective - horizontalResult;
+            }
+            else if(pos >= (square.size() - size)){
+                return num == objective - verticalResult;
+            }
+            else {
+                    if ((horizontalResult + num) > objective) return false;
+                    else if(((pos + 2) % size) == 0) {
+                        if ((objective - (horizontalResult + num)) > square.size()) return false;
+                        if ((objective - (horizontalResult + num)) < 1) return false;
+                    }
+
+                    else if ((verticalResult + num) > objective) return false;
+                    else if( (pos >= (square.size() - size * 2)) && (pos < (square.size() - size))) {
+                        //TODO CHECKEAR ESTA CONDICIÓN
+                        if ((objective - (verticalResult + num)) > square.size()) return false;
+                        //if ((objective - (verticalResult + num)) < 1) return false;
+                    }
+
+                    else if (diagonal_1 && ((diagonalResult_1 + num) > objective) ) return false;
+                    else if (diagonal_2 && ((diagonalResult_2 + num) > objective) ) return false;
+            }
             return true;
         }
 
@@ -35,7 +91,6 @@ public class MagicSquareProblem extends SearchProblem {
             MagicSquareState msSt = (MagicSquareState) st;
             List<Integer> newSquare = new ArrayList<>(msSt.square);
             int size = msSt.size;
-
 
             if(size*size < number) throw new IndexOutOfBoundsException();
 
@@ -130,19 +185,20 @@ public class MagicSquareProblem extends SearchProblem {
     public Action[] actions(State st) {
         MagicSquareState msSt = (MagicSquareState) st;
         List<Integer> square = msSt.square;
-        int size = msSt.size;
-        int[] sums = presentResults(st);
+        //int size = msSt.size;
+        //int[] sums = presentResults(st);
         int j, i = 0;
-        int objective = (size*((size*size) + 1))/2;
-        int target;
-        MagicSquareAction[] Action;
+        //int objective = (size*((size*size) + 1))/2;
+        //int target;
+        Action[] Action;
+        MagicSquareAction tempMagicSquareAction;
 
         while(square.get(i) > 0){
             i++;
             if(i == (square.size() - 1)) break;
         }
 
-        int horizontalResult, verticalResult;
+        /*int horizontalResult, verticalResult;
         boolean diagonal_1 = false;
         int diagonalResult_1 = 0;
         boolean diagonal_2 = false;
@@ -150,6 +206,7 @@ public class MagicSquareProblem extends SearchProblem {
 
         horizontalResult = sums[i/size];
         verticalResult = sums[(i%size) + size];
+
         for(j = 0; j < square.size(); j = j + size + 1) {
             if (j == i) {
                 diagonal_1 = true;
@@ -163,14 +220,22 @@ public class MagicSquareProblem extends SearchProblem {
                 diagonalResult_2 = sums[size * 2 + 1];
                 break;
             }
-        }
+        }*/
 
         List<Integer> actions = new ArrayList<>();
 
         for(j = 1; j <= square.size(); j++)
             if(!square.contains(j)) actions.add(j);
 
-        List<Integer> tempActions = actions;
+        List<Action> tempAction = new ArrayList<>();
+
+        for(j = 0; j < actions.size(); j++) {
+            tempMagicSquareAction = new MagicSquareAction(actions.get(j), i);
+            if(tempMagicSquareAction.isApplicable(st))
+                tempAction.add(tempMagicSquareAction);
+        }
+
+        /*List<Integer> tempActions = actions;
 
         Iterator<Integer> iterator = actions.iterator();
 
@@ -193,7 +258,6 @@ public class MagicSquareProblem extends SearchProblem {
             else
                 actions.removeAll(tempActions);
         }
-
         else {
             while (iterator.hasNext()) {
                 Integer acc = iterator.next();
@@ -223,17 +287,18 @@ public class MagicSquareProblem extends SearchProblem {
                         iterator.remove();
                 }
             }
-        }
+        }*/
 
-        Action = new MagicSquareAction[actions.size()];
+        Action = new MagicSquareAction[tempAction.size()];
 
-        for(j = 0; j < actions.size(); j++)
-            Action[j] = new MagicSquareAction(actions.get(j), i);
+        //if(tempAction.size() != 0)
+            for(j = 0; j < tempAction.size(); j++)
+                Action[j] = tempAction.get(j);
 
         return Action;
     }
 
-    private int[] presentResults(State st){
+    private static int[] presentResults(State st){
         int length = ((MagicSquareState) st).square.size();
         int size = ((MagicSquareState) st).size;
         int arraySize = size * 2 + 2;
