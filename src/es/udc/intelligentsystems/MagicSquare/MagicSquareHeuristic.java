@@ -1,4 +1,7 @@
-package es.udc.intelligentsystems;
+package es.udc.intelligentsystems.MagicSquare;
+
+import es.udc.intelligentsystems.Heuristic;
+import es.udc.intelligentsystems.State;
 
 public class MagicSquareHeuristic extends Heuristic {
 

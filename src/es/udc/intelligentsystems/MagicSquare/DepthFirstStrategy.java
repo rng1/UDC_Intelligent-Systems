@@ -1,40 +1,43 @@
-package es.udc.intelligentsystems;
+package es.udc.intelligentsystems.MagicSquare;
+
+import es.udc.intelligentsystems.*;
 
 import java.util.*;
 
-public class BreadthFirstStrategy implements SearchStrategy {
+public class DepthFirstStrategy implements SearchStrategy {
 
     @Override
     public Node[] solve(SearchProblem p) throws Exception {
         List<Node> explored = new ArrayList<>();
-        Queue<Node> frontier = new LinkedList<>();
+        Stack<Node> frontier = new Stack<>();
         Node magicSquareNode = new MagicSquareNode(p.getInitialState(), null, null);
-        frontier.offer(magicSquareNode);
+        frontier.push(magicSquareNode);
         int i = 0;
         int j = 1;
 
         while (!frontier.isEmpty()){
-            magicSquareNode = frontier.remove();
-            explored.add(magicSquareNode);
+            magicSquareNode = frontier.pop();
 
-            i++;
+            if(p.isGoal(magicSquareNode.getState())){
+                System.out.println( "\n\nNumber of expanded nodes: " + i +
+                        "\nNumber of created nodes: " + j +
+                        "\nNumber of explored nodes: " + explored.size() +
+                        "\nSolution:");
+                System.out.println(magicSquareNode);
+                return reconstructSol(magicSquareNode);
+            }
+
+            explored.add(magicSquareNode); i++;
+
             System.out.println(magicSquareNode);
 
             Action[] availableActions = p.actions(magicSquareNode.getState());
 
             for (Action acc: availableActions) {
                 State sc = p.result(magicSquareNode.getState(), acc);
-                Node tempMagicSquareNode = new MagicSquareNode(sc, magicSquareNode, acc);
-                if(p.isGoal(sc)){
-                    System.out.println( "\n\nNumber of expanded nodes: " + i +
-                                        "\nNumber of created nodes: " + j +
-                                        "\nSolution:");
-                    System.out.println(tempMagicSquareNode);
-                    return reconstructSol(tempMagicSquareNode);
-                }
                 if (notContainState(sc, explored) && notContainState(sc, frontier)) {
-                    frontier.add(tempMagicSquareNode);
-                    j++;
+                    Node tempMagicSquareNode = new MagicSquareNode(sc, magicSquareNode, acc);
+                    frontier.push(tempMagicSquareNode); j++;
                 }
             }
         }

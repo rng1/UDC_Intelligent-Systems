@@ -1,4 +1,6 @@
-package es.udc.intelligentsystems;
+package es.udc.intelligentsystems.MagicSquare;
+
+import es.udc.intelligentsystems.*;
 
 import java.util.*;
 
@@ -34,10 +36,17 @@ public class StartSearchStrategy implements InformedSearchStrategy {
 
             for (Action acc: availableActions) {
                 State sc = p.result(magicSquareNode.getState(), acc);
-                float cost = ((MagicSquareWeightedNode) magicSquareNode).getStateCost() + acc.getCost();
-                if (notContainState(sc, explored) && notContainState(sc, frontier)) {
-                    Node tempMagicSquareNode = new MagicSquareWeightedNode(sc, magicSquareNode, acc, cost, cost + h.evaluate(sc));
-                    frontier.offer(tempMagicSquareNode); j++;
+                float cost = ((MagicSquareWeightedNode) magicSquareNode).getRealCost() + acc.getCost();
+                Node tempMagicSquareNode = new MagicSquareWeightedNode(sc, magicSquareNode, acc, cost, cost + h.evaluate(sc));
+                if (notContainState(sc, explored)) {
+                    if(notContainState(sc, frontier)) {
+                        frontier.offer(tempMagicSquareNode);
+                        j++;
+                    } else{
+                        Node aux = extractNode(sc, frontier);
+                        frontier.remove(aux);
+                        frontier.offer(tempMagicSquareNode);
+                    }
                 }
             }
         }
@@ -47,9 +56,18 @@ public class StartSearchStrategy implements InformedSearchStrategy {
     boolean notContainState(State sc, Collection<Node> explored){
         for(Node magicSquareNode : explored)
             if(sc.equals(magicSquareNode.getState()))
-                return false;
-        return true;
+                return true;
+        return false;
     }
+
+    Node extractNode(State sc, Collection<Node> explored){
+        for(Node magicSquareNode : explored)
+            if(sc.equals(magicSquareNode.getState()))
+                return magicSquareNode;
+        return null;
+    }
+
+
 
     Node[] reconstructSol(Node node){
         List<Node> tempSolution = new ArrayList<>();

@@ -1,9 +1,12 @@
-package es.udc.intelligentsystems;
+package es.udc.intelligentsystems.MagicSquare;
+
+import es.udc.intelligentsystems.SearchProblem;
+import es.udc.intelligentsystems.SearchStrategy;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class Main {
+public class MainEx2A {
 
     public static void main(String[] args) throws Exception {
         //List<Integer> initialSquare = Arrays.asList(4,9,2, 3,5,0, 0,1,0); int size = 3;

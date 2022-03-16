@@ -1,6 +1,10 @@
-package es.udc.intelligentsystems;
+package es.udc.intelligentsystems.MagicSquare;
 
-public class MagicSquareNode extends Node{
+import es.udc.intelligentsystems.Action;
+import es.udc.intelligentsystems.Node;
+import es.udc.intelligentsystems.State;
+
+public class MagicSquareNode extends Node {
 
     State state;
     Node parent;

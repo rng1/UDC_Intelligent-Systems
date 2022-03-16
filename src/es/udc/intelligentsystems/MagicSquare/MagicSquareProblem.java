@@ -1,4 +1,8 @@
-package es.udc.intelligentsystems;
+package es.udc.intelligentsystems.MagicSquare;
+
+import es.udc.intelligentsystems.Action;
+import es.udc.intelligentsystems.SearchProblem;
+import es.udc.intelligentsystems.State;
 
 import java.util.ArrayList;
 import java.util.List;
