@@ -21,7 +21,6 @@ public class ASearchStrategy implements InformedSearchStrategy {
             if(p.isGoal(magicSquareNode.getState())){
                 System.out.println( "\n\nNumber of expanded nodes: " + i +
                         "\nNumber of created nodes: " + j +
-                        "\nNumber of explored nodes: " + explored.size() +
                         "\nSolution:");
                 System.out.println(magicSquareNode);
                 //return reconstructSol(magicSquareNode);
@@ -42,7 +41,8 @@ public class ASearchStrategy implements InformedSearchStrategy {
                     if(notContainState(sc, frontier)) {
                         frontier.offer(tempMagicSquareNode);
                         j++;
-                    } else{
+                    } else if(  ((MagicSquareWeightedNode) extractNode(sc, frontier)).getEstimatedCost() <
+                                ((MagicSquareWeightedNode) tempMagicSquareNode).getEstimatedCost()){
                         Node aux = extractNode(sc, frontier);
                         frontier.remove(aux);
                         frontier.offer(tempMagicSquareNode);
