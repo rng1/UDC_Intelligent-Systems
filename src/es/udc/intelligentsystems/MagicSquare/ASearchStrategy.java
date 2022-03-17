@@ -4,7 +4,7 @@ import es.udc.intelligentsystems.*;
 
 import java.util.*;
 
-public class StartSearchStrategy implements InformedSearchStrategy {
+public class ASearchStrategy implements InformedSearchStrategy {
 
     @Override
     public State solve(SearchProblem p, Heuristic h) throws Exception {
@@ -56,8 +56,8 @@ public class StartSearchStrategy implements InformedSearchStrategy {
     boolean notContainState(State sc, Collection<Node> explored){
         for(Node magicSquareNode : explored)
             if(sc.equals(magicSquareNode.getState()))
-                return true;
-        return false;
+                return false;
+        return true;
     }
 
     Node extractNode(State sc, Collection<Node> explored){

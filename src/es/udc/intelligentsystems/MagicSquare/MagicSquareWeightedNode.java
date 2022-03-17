@@ -21,7 +21,7 @@ public class MagicSquareWeightedNode extends MagicSquareNode implements Comparab
 
     @Override
     public int compareTo(MagicSquareWeightedNode that) {
-        int result = (int) (this.realCost - that.realCost);
+        int result = (int) (that.realCost - this.realCost);
         return result;
     }
 }

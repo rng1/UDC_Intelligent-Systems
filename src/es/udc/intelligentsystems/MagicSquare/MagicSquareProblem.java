@@ -46,8 +46,11 @@ public class MagicSquareProblem extends SearchProblem {
             boolean diagonal_2 = false;
             int diagonalResult_2 = 0;
 
-            horizontalResult = sums[pos/size];
-            verticalResult = sums[(pos%size) + size];
+            int row = pos/size;
+            int column = (pos%size) + size;
+
+            horizontalResult = sums[row];
+            verticalResult = sums[column];
             for(j = 0; j < square.size(); j = j + size + 1) {
                 if (j == pos) {
                     diagonal_1 = true;
@@ -55,7 +58,7 @@ public class MagicSquareProblem extends SearchProblem {
                     break;
                 }
             }
-            for(j = size - 1; j < square.size(); j = j + size - 1) {
+            for(j = size - 1; j < square.size() - 1; j = j + size - 1) {
                 if (j == pos) {
                     diagonal_2 = true;
                     diagonalResult_2 = sums[size * 2 + 1];
@@ -63,30 +66,44 @@ public class MagicSquareProblem extends SearchProblem {
                 }
             }
 
+            int rowStart = 0 + ((row) * size);
+            int rowCount = 0;
+            for(j = rowStart; j < rowStart + size; j++)
+                if(square.get(j) < 1) rowCount++;
+
+            int columnStart = (pos%size);
+            int columnCount = 0;
+            for(j = columnStart; j <= (size * (size - 1)) + columnStart; j = j + size)
+                if(square.get(j) < 1) columnCount++;
+
+            if ((horizontalResult + num) > objective) return false;
+            else if ((verticalResult + num) > objective) return false;
+            else if (diagonal_1 && ((diagonalResult_1 + num) > objective) ) return false;
+            else if (diagonal_2 && ((diagonalResult_2 + num) > objective) ) return false;
+
             // LAST NUMBER CAN BE ONLY ONE
-            if(((pos + 1) % size) == 0){
+            //if(((pos + 1) % size) == 0){
+            if( (rowCount == 1)){
                 return num == objective - horizontalResult;
             }
-            else if(pos >= (square.size() - size)){
+            //if(pos >= (square.size() - size)){
+            if( (columnCount == 1)){
                 return num == objective - verticalResult;
             }
             else {
-                    if ((horizontalResult + num) > objective) return false;
-                    else if(((pos + 2) % size) == 0) {
+                    //if(((pos + 2) % size) == 0) {
+                    if(rowCount == 2) {
                         if ((objective - (horizontalResult + num)) > square.size()) return false;
                         if ((objective - (horizontalResult + num)) < 1) return false;
                     }
 
-                    else if ((verticalResult + num) > objective) return false;
-                    else if( (pos >= (square.size() - size * 2)) && (pos < (square.size() - size))) {
-                        //TODO CHECKEAR ESTA CONDICIÓN
+                    //if( (pos >= (square.size() - size * 2)) && (pos < (square.size() - size))) {
+                    if(columnCount == 2) {
                         if ((objective - (verticalResult + num)) > square.size()) return false;
-                        //if ((objective - (verticalResult + num)) < 1) return false;
+                        if ((objective - (verticalResult + num)) < 1) return false;
                     }
-
-                    else if (diagonal_1 && ((diagonalResult_1 + num) > objective) ) return false;
-                    else if (diagonal_2 && ((diagonalResult_2 + num) > objective) ) return false;
             }
+
             return true;
         }
 
@@ -189,11 +206,7 @@ public class MagicSquareProblem extends SearchProblem {
     public Action[] actions(State st) {
         MagicSquareState msSt = (MagicSquareState) st;
         List<Integer> square = msSt.square;
-        //int size = msSt.size;
-        //int[] sums = presentResults(st);
         int j, i = 0;
-        //int objective = (size*((size*size) + 1))/2;
-        //int target;
         Action[] Action;
         MagicSquareAction tempMagicSquareAction;
 
@@ -201,30 +214,6 @@ public class MagicSquareProblem extends SearchProblem {
             i++;
             if(i == (square.size() - 1)) break;
         }
-
-        /*int horizontalResult, verticalResult;
-        boolean diagonal_1 = false;
-        int diagonalResult_1 = 0;
-        boolean diagonal_2 = false;
-        int diagonalResult_2 = 0;
-
-        horizontalResult = sums[i/size];
-        verticalResult = sums[(i%size) + size];
-
-        for(j = 0; j < square.size(); j = j + size + 1) {
-            if (j == i) {
-                diagonal_1 = true;
-                diagonalResult_1 = sums[size * 2];
-                break;
-            }
-        }
-        for(j = size - 1; j < square.size(); j = j + size - 1) {
-            if (j == i) {
-                diagonal_2 = true;
-                diagonalResult_2 = sums[size * 2 + 1];
-                break;
-            }
-        }*/
 
         List<Integer> actions = new ArrayList<>();
 
@@ -239,63 +228,8 @@ public class MagicSquareProblem extends SearchProblem {
                 tempAction.add(tempMagicSquareAction);
         }
 
-        /*List<Integer> tempActions = actions;
-
-        Iterator<Integer> iterator = actions.iterator();
-
-        // LAST NUMBER CAN BE ONLY ONE
-        if(((i + 1) % size) == 0){
-            target = objective - horizontalResult;
-            if(actions.contains(target)){
-                actions.removeAll(tempActions);
-                actions.add(target);
-            }
-            else
-                actions.removeAll(tempActions);
-        }
-        else if(i >= (square.size() - size)){
-            target = objective - verticalResult;
-            if(actions.contains(target)){
-                actions.removeAll(tempActions);
-                actions.add(target);
-            }
-            else
-                actions.removeAll(tempActions);
-        }
-        else {
-            while (iterator.hasNext()) {
-                Integer acc = iterator.next();
-                if ((horizontalResult + acc) > objective)
-                    iterator.remove();
-                else if(((i + 2) % size) == 0){
-                    if( ((objective - (horizontalResult + acc)) > square.size()) )
-                            //|| ((horizontalResult + acc) == objective) )
-                        iterator.remove();
-                }
-
-                else if ((verticalResult + acc) > objective)
-                    iterator.remove();
-                else if(i >= (square.size() - size * 2)){
-                    if( ((objective - (verticalResult + acc)) > square.size()) )
-                            //|| ((verticalResult + acc) == objective) )
-                        iterator.remove();
-                }
-
-                else if (diagonal_1) {
-                    if ((diagonalResult_1 + acc) > objective)
-                    iterator.remove();
-                }
-
-                else if (diagonal_2) {
-                    if ((diagonalResult_2 + acc) > objective)
-                        iterator.remove();
-                }
-            }
-        }*/
-
         Action = new MagicSquareAction[tempAction.size()];
 
-        //if(tempAction.size() != 0)
             for(j = 0; j < tempAction.size(); j++)
                 Action[j] = tempAction.get(j);
 

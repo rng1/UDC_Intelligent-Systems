@@ -21,7 +21,6 @@ public class DepthFirstStrategy implements SearchStrategy {
             if(p.isGoal(magicSquareNode.getState())){
                 System.out.println( "\n\nNumber of expanded nodes: " + i +
                         "\nNumber of created nodes: " + j +
-                        "\nNumber of explored nodes: " + explored.size() +
                         "\nSolution:");
                 System.out.println(magicSquareNode);
                 return reconstructSol(magicSquareNode);
